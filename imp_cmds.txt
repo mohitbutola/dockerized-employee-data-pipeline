@@ -1,0 +1,25 @@
+docker-compose up --build
+docker ps
+
+docker-compose down -v 
+docker-compose up --build
+
+
+docker exec -it postgres_db psql -U employee_user -d employees_db
+OR
+psql -U employee_user -d employees_db --inside cotainer shell
+
+
+SELECT COUNT(*) FROM employees_clean;
+
+
+SELECT email, COUNT(*) FROM employees_clean GROUP BY email HAVING COUNT(*) > 1;
+
+SELECT salary, salary_band
+FROM employees_clean
+LIMIT 10;
+
+
+SELECT birth_date, age, hire_date, tenure_years
+FROM employees_clean
+LIMIT 10;

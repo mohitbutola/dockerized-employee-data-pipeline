@@ -1,0 +1,19 @@
+employee-data-pipeline/
+│
+├── docker-compose.yml
+├── README.md
+│
+├── data/
+│   └── employees_raw.csv
+│
+├── spark/
+│   ├── Dockerfile
+│   └── employee_cleaning.scala   (or .py if needed)
+│
+├── postgres/
+│   └── init.sql
+│
+├── scripts/
+│   └── generate_data.py
+│
+└── logs/
