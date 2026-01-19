@@ -143,7 +143,31 @@ The reduction in record count is expected and confirms that data quality rules a
 
 ## Data Verification (SQL Queries)
 
-### 1. Total Record Count
+### 1. Sample Record from Clean Table
+
+```sql
+SELECT * FROM employees_clean LIMIT 1;
+```
+
+**Sample Output:**
+
+| employee_id | first_name | last_name | full_name     | email                     | email_domain | hire_date  | title                          | department | salary   | salary_band | manager_id | address                               | city            | state | zip_code | birth_date | age | tenure_years | status | created_at                  | updated_at                  |
+|-------------|------------|-----------|---------------|---------------------------|--------------|------------|--------------------------------|------------|----------|-------------|------------|---------------------------------------|-----------------|-------|----------|------------|-----|--------------|--------|-----------------------------|-----------------------------|
+| 1384        | Aaron      | Johnson   | Aaron Johnson | aaron.johnson@company.com | company.com  | 2022-05-14 | Engineer-manufacturing-systems | It         | 56356.00 | Mid         |            | 9426 Roberta SquaresNorth Jane, MH 41087 | South-Kyleburgh | AZ    | 65204    | 1985-10-19 | 40  | 3.6          | Active | 2026-01-18 10:58:53.889967  | 2026-01-18 10:58:53.889967  |
+
+This demonstrates:
+- **Proper case names** (Aaron Johnson)
+- **Lowercase email** (aaron.johnson@company.com)
+- **Extracted email domain** (company.com)
+- **Clean salary** (56356.00 - no $ or commas)
+- **Calculated age** (40 years from birth_date)
+- **Calculated tenure** (3.6 years from hire_date)
+- **Salary band assignment** (Mid based on salary range)
+- **Timestamps** for audit trail
+
+---
+
+### 2. Total Record Count
 
 ```sql
 SELECT COUNT(*) FROM employees_clean;
@@ -151,7 +175,7 @@ SELECT COUNT(*) FROM employees_clean;
 
 ![Total Record Count](image-3.png)
 
-### 2. Email Uniqueness Validation
+### 3. Email Uniqueness Validation
 
 ```sql
 SELECT email, COUNT(*)
@@ -162,7 +186,7 @@ HAVING COUNT(*) > 1;
 
 ![Email Uniqueness](image-2.png)
 
-### 3. Salary Cleaning & Band Validation
+### 4. Salary Cleaning & Band Validation
 
 ```sql
 SELECT salary, salary_band
@@ -172,7 +196,7 @@ LIMIT 10;
 
 ![Salary Validation](image-1.png)
 
-### 4. Age & Tenure Validation
+### 5. Age & Tenure Validation
 
 ```sql
 SELECT birth_date, age, hire_date, tenure_years
