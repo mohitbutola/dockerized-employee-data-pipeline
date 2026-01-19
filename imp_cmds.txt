@@ -10,16 +10,35 @@ OR
 psql -U employee_user -d employees_db --inside cotainer shell
 
 
-SELECT COUNT(*) FROM employees_clean;
+------------- Steps to run this project on you SYSTEM
+1. git@github.com:mohitbutola/dockerized-employee-data-pipeline.git
 
+2. cd <proj dir>
 
-SELECT email, COUNT(*) FROM employees_clean GROUP BY email HAVING COUNT(*) > 1;
+3. python -m venv venv
 
-SELECT salary, salary_band
-FROM employees_clean
-LIMIT 10;
+3. pip install -r requirements.txt
 
+4. venv\Scripts\activate
 
-SELECT birth_date, age, hire_date, tenure_years
-FROM employees_clean
-LIMIT 10;
+5. docker-compose up #build docker images 
+	docker-compose down -v #drop docker objects if need to apply changes in docker images
+	
+6. verify data transformations by connecting to sink postgres_db
+
+7. psql -U employee_user -d employees_db --inside cotainer shell
+
+8. verify sql commands 
+	SELECT COUNT(*) FROM employees_clean;
+
+	SELECT email, COUNT(*) FROM employees_clean GROUP BY email HAVING COUNT(*) > 1;
+
+	SELECT salary, salary_band
+	FROM employees_clean
+	LIMIT 10;
+
+	SELECT birth_date, age, hire_date, tenure_years
+	FROM employees_clean
+	LIMIT 10;
+
+	select * from employees_clean limit 100;
