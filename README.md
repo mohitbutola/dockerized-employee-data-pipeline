@@ -1,7 +1,6 @@
 # Employee Data Engineering Pipeline
 
 ## Overview
-
 This project implements an **end-to-end data engineering pipeline** that ingests raw employee data from CSV files, performs **data cleaning, validation, transformation, and enrichment using Apache Spark**, and loads the processed data into a **PostgreSQL database**.
 
 The pipeline is fully **Dockerized** and is designed to simulate **real-world data quality issues**, not ideal or perfectly clean datasets.
@@ -9,11 +8,14 @@ The pipeline is fully **Dockerized** and is designed to simulate **real-world da
 ---
 
 ## Architecture
+
+```
 Raw CSV (employees_raw.csv)
-↓
+        ↓
 Apache Spark (Cleaning, Validation, Enrichment)
-↓
+        ↓
 PostgreSQL (employees_clean table)
+```
 
 ### Technology Stack
 - Apache Spark (PySpark)
@@ -25,20 +27,20 @@ PostgreSQL (employees_clean table)
 
 ## Project Structure
 
+```
 employee-data-pipeline/
 ├── docker-compose.yml
 ├── README.md
 ├── data/
-│ └── employees_raw.csv
+│   └── employees_raw.csv
 ├── spark/
-│ ├── Dockerfile
-│ └── employee_cleaning.py
+│   ├── Dockerfile
+│   └── employee_cleaning.py
 ├── postgres/
-│ └── init.sql
+│   └── init.sql
 ├── scripts/
-│ └── generate_data.py
-
-
+│   └── generate_data.py
+```
 
 ---
 
@@ -66,36 +68,36 @@ All data transformations are implemented in **Apache Spark**.
 ### 1. Data Validation Rules
 
 | Rule | Handling |
-|---|---|
-Missing `employee_id`, `email`, `hire_date` | Record dropped |
-Duplicate `employee_id` | Deduplicated |
-Duplicate `email` | Deduplicated to match DB constraint |
-Invalid email format | Dropped |
-Future `hire_date` | Dropped |
+|------|----------|
+| Missing `employee_id`, `email`, `hire_date` | Record dropped |
+| Duplicate `employee_id` | Deduplicated |
+| Duplicate `email` | Deduplicated to match DB constraint |
+| Invalid email format | Dropped |
+| Future `hire_date` | Dropped |
 
 ---
 
 ### 2. Column-Level Transformations
 
 | Column | Transformation |
-|---|---|
-`first_name`, `last_name` | Converted to Proper Case |
-`email` | Lowercased |
-`salary` | Removed `$` and `,`, cast to numeric |
-`hire_date`, `birth_date` | Cast to DATE |
-`department`, `status` | Standardized casing |
+|--------|----------------|
+| `first_name`, `last_name` | Converted to Proper Case |
+| `email` | Lowercased |
+| `salary` | Removed `$` and `,`, cast to numeric |
+| `hire_date`, `birth_date` | Cast to DATE |
+| `department`, `status` | Standardized casing |
 
 ---
 
 ### 3. Derived & Enriched Columns
 
 | Column | Logic |
-|---|---|
-`full_name` | `first_name + last_name` |
-`email_domain` | Extracted from email |
-`age` | Calculated from `birth_date` |
-`tenure_years` | Calculated from `hire_date` |
-`salary_band` | Junior / Mid / Senior |
+|--------|-------|
+| `full_name` | `first_name + last_name` |
+| `email_domain` | Extracted from email |
+| `age` | Calculated from `birth_date` |
+| `tenure_years` | Calculated from `hire_date` |
+| `salary_band` | Junior / Mid / Senior |
 
 ---
 
@@ -129,11 +131,11 @@ The Spark job runs as a **batch process** inside a Docker container.
 ## Output Summary
 
 | Metric | Value |
-|---|---|
-Raw records | ~1000 |
-Clean records loaded | **325** |
-Duplicate emails | **0** |
-Future hire dates | **0** |
+|--------|-------|
+| Raw records | ~1000 |
+| Clean records loaded | **325** |
+| Duplicate emails | **0** |
+| Future hire dates | **0** |
 
 The reduction in record count is expected and confirms that data quality rules are applied correctly.
 
@@ -146,7 +148,8 @@ The reduction in record count is expected and confirms that data quality rules a
 ```sql
 SELECT COUNT(*) FROM employees_clean;
 ```
-![alt text](image-3.png)
+
+![Total Record Count](image-3.png)
 
 ### 2. Email Uniqueness Validation
 
@@ -156,7 +159,8 @@ FROM employees_clean
 GROUP BY email
 HAVING COUNT(*) > 1;
 ```
-![alt text](image-2.png)
+
+![Email Uniqueness](image-2.png)
 
 ### 3. Salary Cleaning & Band Validation
 
@@ -164,9 +168,9 @@ HAVING COUNT(*) > 1;
 SELECT salary, salary_band
 FROM employees_clean
 LIMIT 10;
-
 ```
-![alt text](image-1.png)
+
+![Salary Validation](image-1.png)
 
 ### 4. Age & Tenure Validation
 
@@ -176,4 +180,4 @@ FROM employees_clean
 LIMIT 10; 
 ```
 
-![alt text](image.png)
+![Age and Tenure](image.png)
